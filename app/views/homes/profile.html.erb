@@ -1,0 +1,13 @@
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+<p id="notice"><%= notice %></p>
+<h1>HackerNews LIVE</h1>
+<hr>
+<div class="container" style="padding:10px 0px;">
+  <table>
+    <tbody>
+    <tr><td><b>User:</b></td><td><%= @profile['id'] %></td></tr>
+    <tr><td><b>Created:</b></td><td><%= Time.at(@profile['created']).strftime("%B %d, %Y") %></td></tr>
+    <tr><td><b>Karma:</b></td><td><%= @profile['karma'] %></td></tr>
+    <tr><td style="vertical-align:top"><b>About:</b></td><td><%= @profile['about'].html_safe if @profile['about'].present? %></td></tr>
+  </div>
+</div>

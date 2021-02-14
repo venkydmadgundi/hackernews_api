@@ -1,0 +1,53 @@
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+<p id="notice"><%= notice %></p>
+<h1>HackerNews LIVE</h1>
+<hr>
+<div class="container" style="padding:10px 0px;">
+  <form>
+    <div id="searchFilter">
+      <input type="input" class="form-control input-lg" id="txt-search" placeholder="Search by title, user..">
+      <% [ 'top', 'ask', 'show', 'jobs'].each do |story_type| %>
+        <label class="radio-inline">
+        <%= radio_button_tag 'story_type', story_type, ( params[:story_type].nil? ? story_type == "top" : params[:story_type] == story_type) %><%= label_tag story_type, story_type.humanize %>
+        </label>
+      <% end %>
+    </div>
+  </form>
+</div>
+<div id='filter-records'>
+  <div class="row">
+      <% @stories.each do |story| %>                                                                                            <div class="col-md-7">
+          <h4><%= link_to story['title'], story['url'], target: :_blank %> </h4>
+          <p><%=story['score']%> points by <%= link_to story['by'], "/profile?id=#{story['by']}" %> <%= time_ago(story['time']) %> | <%= story['descendants']%> comments</p>
+        </div>                                                                                                                <% end %>
+    </div>
+</div>
+    <%= hidden_field_tag(:hackerStories, value=@stories.to_json) %>
+
+<script type='text/javascript'>
+  $('#txt-search').keyup(function(){
+    var searchField = $(this).val();
+    if(searchField === '')  {
+      $('#filter-records').html('');
+      return;
+    }      
+    var regex = new RegExp(searchField, "i");
+    var output = '<div class="row">';
+    var result = JSON.parse($('#hackerStories').val());
+    $.each(result, function(key, val){
+        if ((val.title.search(regex) != -1) || (val.by.search(regex) != -1)) {
+          output += '<div class="col-md-7">';
+          output += '<h3>' + val.title + '</h3>';
+          output += '<p>'+ val.score +' points by ' + val.by + ' | '+ val.descendants +' comments </p>'
+          output += '</div>';
+        }
+        });
+        output += '</div>';
+        $('#filter-records').html(output);
+    });
+  
+  $('#searchFilter').on('change','input[name=story_type]:checked',function(){
+    var selectedStoryType = $(this).val();
+    window.location.href = "?story_type="+ selectedStoryType;
+  });
+</script>
